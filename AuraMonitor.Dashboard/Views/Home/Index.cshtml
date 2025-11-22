@@ -1,0 +1,142 @@
+﻿@model AuraMonitor.Dashboard.Controllers.DashboardViewModel
+@{
+    ViewData["Title"] = "AURA Monitor Dashboard";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-4 text-primary">
+                <i class="fas fa-heartbeat me-3"></i>AURA Monitor Dashboard
+            </h1>
+            <p class="lead">Monitoramento de Bem-Estar Corporativo</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card border-primary shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Check-ins de Humor</h5>
+                    <p class="card-text display-6">@Model.MoodData.TotalCheckins</p>
+                    <small class="text-muted">Total de registros</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card border-success shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Média de Humor</h5>
+                    <p class="card-text display-6">@Model.MoodData.AverageMood.ToString("F1")<small class="fs-6">/5.0</small></p>
+                    <small class="text-muted">Escala 1-5</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card border-warning shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Alertas Ativos</h5>
+                    <p class="card-text display-6">@Model.EnvironmentData.AlertCount</p>
+                    <small class="text-muted">Sensores</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Distribuição de Humor</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.MoodData.MoodDistribution.Any())
+                    {
+                    <ul class="list-group">
+                        @foreach (var mood in Model.MoodData.MoodDistribution)
+                            {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @GetMoodDisplayName(mood.Key)
+                            <span class="badge bg-primary rounded-pill">@mood.Value</span>
+                        </li>
+                            }
+                    </ul>
+                    }
+                    else
+                    {
+                    <p class="text-muted">Nenhum dado de humor disponível</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Alertas Recentes</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Alerts.Any())
+                    {
+                    <div class="list-group">
+                        @foreach (var alert in Model.Alerts.Take(3))
+                            {
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <small class="text-muted">@alert.Timestamp.ToString("dd/MM HH:mm")</small>
+                                <span class="badge bg-@(alert.Priority == "High" ? "danger" : "warning")">@alert.Priority</span>
+                            </div>
+                            <h6 class="mb-1">@alert.Title</h6>
+                            <small>📍 @alert.Location</small>
+                        </div>
+                            }
+                    </div>
+                    }
+                    else
+                    {
+                    <p class="text-muted">Nenhum alerta ativo</p>
+                    }
+                </div>
+            </div>
+
+            <div class="card shadow mt-4">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">Ambiente Corporativo</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="text-muted small">Temperatura</div>
+                            <div class="h5">@Model.EnvironmentData.AverageTemperature.ToString("F1")°C</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted small">Ruído</div>
+                            <div class="h5">@Model.EnvironmentData.AverageNoise.ToString("F0") dB</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted small">Luz</div>
+                            <div class="h5">@Model.EnvironmentData.AverageLight.ToString("F0") lux</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    private string GetMoodDisplayName(string moodKey)
+    {
+        return moodKey switch
+        {
+            "VerySad" => "😢 Muito Triste",
+            "Sad" => "😞 Triste",
+            "Neutral" => "😐 Neutro",
+            "Happy" => "😊 Feliz",
+            "VeryHappy" => "😆 Muito Feliz",
+            _ => moodKey
+        };
+    }
+}
