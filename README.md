@@ -144,7 +144,7 @@ dotnet run --project AuraMonitor.Web
 
 Acesse no navegador:
 
-http://localhost:5000
+http://localhost:5018/swagger
 
 🧪 Funcionalidades Implementadas
 
@@ -177,4 +177,5 @@ Incluir testes unitários e integração
 📄 Licença
 
 Projeto acadêmico — uso livre para fins educacionais.
+
 
